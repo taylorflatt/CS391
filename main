@@ -2,9 +2,6 @@
 Created on Mar 6, 2015
 
 @author: Taylor Flatt
-@note: This is a work in progress and there are several features I am in the process
-of introducing. I am turning in a bare bones project (fulfills all the requires set 
-forth by the rubric and includes extra features).
 '''
 import pygame, sys, TextInputManager, Menu
 from Menu import *
@@ -25,15 +22,13 @@ GLOBAL STATICS
 '''
 MAIN
 '''
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
 '''
 Create the screen
 '''
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-
 
 def main():
     ''''''             ''''''
@@ -41,10 +36,9 @@ def main():
     ''''''             ''''''
     
     '''
-    @var nameFlag: Sets the flag a while loop is executed while the player enters their name.
     @var state: Default set to TITLE since that is the first game state we want the player to see.
+    @var keyboard: Sets up a variable to check if a key is pressed so I can do comparisons in conditionals later.
     @var pauseState: Default set to False so the game is not paused and can be toggled by player input later.
-    @var playerScore: Default set to 0. Tracks player score on bricks completely destroyed.
     @var enteredName: Defaulted to False. Checks if the player's name has been fully entered (i.e the player has or has not pressed enter. So we can run a while).
     '''
     state = TITLE
@@ -57,28 +51,7 @@ def main():
     while(True):
         screen.fill(Color.black)
         msElapsed = clock.tick(30)
-        
-        menu.checkPaused(menu.getState(), pauseState)
-        
-        '''Runs logic for Game State vs Paused State'''
-        '''if(state == GAME or state == PAUSED):
-            
-            Allows the user to pause upon pressing the 'p' key
-            if(keyboard[pygame.K_p] and pauseState == False)
-                pauseState = True
-                
-                if(state == GAME):
-                    state = PAUSED
-                    
-                else:
-                    state = GAME
-                    
-            elif(keyboard[pygame.K_p] == False):
-                pauseState = False
-            #elif(keyboard[pygame.K_p] == True and ball.isBallReleased() == False):
-                #displayTitle = fontTitle.render("You cannot pause yet! You must first release the ball.", True, Color.white)
-                #screen.blit(displayTitle, (((SCREEN_WIDTH / 2) - displayTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 150)))'''
-        
+        menu.checkPaused(menu.getState(), pauseState)      
         
         if(menu.getState() == TITLE):
             
@@ -100,7 +73,7 @@ def main():
                 '''If enter is not pressed, it doesn't skip name creation. Otherwise it somehow does. Need to figure that out. Temp fix below.'''
                 if(event.type == pygame.KEYDOWN):
                     state = menu.setState(CREATION)
-                    print('We pressed a key other than return')
+                    print('We pressed a key.') #(Debug)
                 
                 elif(event.type == pygame.QUIT):
                     pygame.quit; sys.exit();
@@ -135,22 +108,40 @@ def main():
             Honestly unsure why it goes ALL the way to the beginning as if I am retyping everything in the field again. It is definitely odd behavior.
             '''
             
+            '''
+            @bug: Update 3/24/15: It appears as if when I backspace, it completely removes the string from the list. So if I enter "abcd" then press backspace, it will remove those characters 
+            from my list and then move my cursor to the beginning of the line but leave the characters on the screen. I found this out when I implemented my minimum character requirements. So 
+            for some reason, all letters are being removed from the list when backspace is pressed ONCE.
+            '''
+            
+            '''
+            @bug: Update 3/24/15: I think it has something to do with my update to the enterNameField. In my debug, if I call it once to add the event to my list (the pressed keys) and also 
+            save the name to a variable and then print the variable, it would print multiples of the pressed key (2 instead of 1). So something funky is happening there.
+            
+            Just the ACT of storing the name from the update list forces duplication of characters on the screen. It is very odd behavior. I mean I suppose it makes sense if I am calling the 
+            update method each time. It will attempt to print out 
+            '''
+            
             while(enteredName == False):
                 events = pygame.event.get() #Sets variable events so we can access our key presses
                 
+                '''Extra events MUST go between my events declaration and the update to my textbox. If not, weird things will happen.'''
                 '''ALLOW EXIT'''
                 for event in events:
                     if event.type == QUIT: return
-                        
-                if(menu.isKeyPressed(pygame.K_RETURN) == True):
-                    #What if they are done typing?
-                    #Don't forget to set the variable storing the string.
-                    #This section will do more work in the future. You'll probably be needing to call additional methods here.
-                    playerName = enterNameField.update(events)
-                    menu.setState(MAIN)
-                    print(enterNameField.update(events)) #Sets the player name in my array.
+                    
+                '''Handles the event in which a None Type occurs when the player attempts to proceed without the sufficient amount of characters in their name.'''
+                if(menu.isKeyPressed(pygame.K_RETURN) == True and enterNameField.update(events) == None):
+                    enterNameField.update(events) #Let's us handle the error of having less than 3 characters in our name.
+                    print('Errored out!') #(Debug)
+                    
+                elif(menu.isKeyPressed(pygame.K_RETURN) == True and len(enterNameField.update(events)) >= 3 and enterNameField.update(events) != None):
+                    playerName = enterNameField.update(events) #Sets the player name so we can use it elsewhere
+                    menu.setState(MAIN) #Changes the game state to MAIN so we exit this game state.
+                    print(enterNameField.update(events)) #Prints the player name from my array. (Debug)
+                    print(len(enterNameField.update(events))) #Prints the length of the player name from my array. (Debug)
                     enteredName = True #Allows me to exit my while loop.
-                
+
                 enterNameField.update(events) #Adds the keys to the event array
                 enterNameField.draw(screen) #Draws the keys
                 pygame.display.flip() #Refresh the screen
@@ -458,7 +449,17 @@ def main():
             '''
             
             '''
-            @todo: I plan on adding a detailed menu where you can change difficulties as well as restart or quit. Should be easy to do but just ran out of time for this assignment :\
+            @todo: The plan is to add the following items to the paused menu:
+                Return to Game
+                Settings (With the ability to save the changes)
+                Save (Maybe just saves the user's score. The scope of this project is small enough to even disable this option).
+                Restart (Reloops the GAME state)
+                Quit Main Menu (Drops us to MAIN and need to make sure items in GAME state are destroyed)
+                Quit Desktop (Just exits the game, trivial)
+                
+            @todo: The menu items will be selected based on cursor selection. So it will follow similar logic to the main menus. Need to determine a game size 
+            before continuing here. But the only difficulty would be allowing the user to change the settings and committing those changes to the game whilst 
+            maintaining the integrity of the game.
             '''
             
         if(menu.getState() == GAME_OVER):

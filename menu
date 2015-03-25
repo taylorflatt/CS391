@@ -1,0 +1,321 @@
+'''
+@author: Taylor Flatt
+
+Updated March 8th 2015
+'''
+
+from pygame.locals import *
+from TextInputManager import *
+from main import screen, SCREEN_HEIGHT, SCREEN_WIDTH
+import pygame, string, sys, TextInputManager
+from Colors import *
+
+'''
+@summary: The idea of this class is to handle as many menu functions as possible. I plan on trying to move a
+lot of the stuff from my main class to other classes (or at the very least this one) in order to clean up some 
+of the code for readability's sake.
+'''
+
+'''
+GAME STATES
+'''
+TITLE = 0
+CREATION = 1
+MAIN = 2
+SETTINGS = 3
+CREDITS = 4
+DIFFICULTY = 5
+REBIND_KEYS = 6
+GAME = 10
+PAUSED = 15
+GAME_OVER = 20
+
+'''
+Input Controls
+'''
+MAX_NAME_LENGTH = 50
+
+class Menu():
+
+    def __init__(self, state):
+        self.shifted = False
+        self.state = state
+        keyboard = pygame.key.get_pressed()
+        nameFlag = False
+        playerName = ''
+        
+    '''
+    @summary: Checks to see if ANY one key is being pressed and then if that key is being pressed returns true.
+    @return: boolean
+    '''
+        
+    def isKeyPressed(self, inputKey):
+        
+        keyPressed = pygame.key.get_pressed()
+        
+        if keyPressed[inputKey]:
+            return True
+        
+        else:
+            return False
+
+    def checkPaused(self, state, pauseState):
+        
+        keyboard = pygame.key.get_pressed()
+        
+        if(state == 'GAME' or state == PAUSED):
+            '''Allows the user to pause upon pressing the 'p' key'''
+            if(keyboard[pygame.K_p] and pauseState == False):
+                pauseState = True
+                
+                if(state == GAME):
+                    state = self.setState(PAUSED)
+                    
+                else:
+                    state = self.setState(GAME)
+                    
+            elif(keyboard[pygame.K_p] == False):
+                pauseState = False
+    
+    def setState(self, newState):
+        self.state = newState
+        
+    def getState(self):
+        return self.state
+        
+    def setPlayerName(self, newPlayerName):
+        self.playerName = newPlayerName
+        
+    def getPlayerName(self):
+        return self.playerName
+        
+    '''
+    @summary: Checks to see if any key was pressed and to output true if ANY key was pressed. (Not specific, general).
+    @return: boolean
+    '''
+    def wasAnyKeyPressed(self, events):
+        for event in events:
+            if event.type == KEYUP:
+                
+                if event.key == K_LSHIFT or event.key == K_RSHIFT: self.shifted = False
+                
+            if event.type == KEYDOWN:
+                
+                if event.key == K_LSHIFT or event.key == K_RSHIFT: self.shifted = True
+                
+                elif event.key == K_SPACE: self.value += ' '
+                
+                if not self.shifted:
+                    if event.key == K_BACKSPACE:
+                        return True
+                    elif event.key == K_RETURN:
+                        return True
+                    elif event.key == K_a and 'a':
+                        return True
+                    elif event.key == K_b and 'b':
+                        return True
+                    elif event.key == K_c and 'c':
+                        return True
+                    elif event.key == K_d and 'd':
+                        return True
+                    elif event.key == K_e and 'e':
+                        return True
+                    elif event.key == K_f and 'f':
+                        return True
+                    elif event.key == K_g and 'g':
+                        return True
+                    elif event.key == K_h and 'h':
+                        return True
+                    elif event.key == K_i and 'i':
+                        return True
+                    elif event.key == K_j and 'j':
+                        return True
+                    elif event.key == K_k and 'k':
+                        return True
+                    elif event.key == K_l and 'l':
+                        return True
+                    elif event.key == K_m and 'm':
+                        return True
+                    elif event.key == K_n and 'n':
+                        return True
+                    elif event.key == K_o and 'o':
+                        return True
+                    elif event.key == K_p and 'p':
+                        return True
+                    elif event.key == K_q and 'q':
+                        return True
+                    elif event.key == K_r and 'r':
+                        return True
+                    elif event.key == K_s and 's':
+                        return True
+                    elif event.key == K_t and 't':
+                        return True
+                    elif event.key == K_u and 'u':
+                        return True
+                    elif event.key == K_v and 'v':
+                        return True
+                    elif event.key == K_w and 'w':
+                        return True
+                    elif event.key == K_x and 'x':
+                        return True
+                    elif event.key == K_y and 'y':
+                        return True
+                    elif event.key == K_z and 'z':
+                        return True
+                    elif event.key == K_0 and '0':
+                        return True
+                    elif event.key == K_1 and '1':
+                        return True
+                    elif event.key == K_2 and '2':
+                        return True
+                    elif event.key == K_3 and '3':
+                        return True
+                    elif event.key == K_4 and '4':
+                        return True
+                    elif event.key == K_5 and '5':
+                        return True
+                    elif event.key == K_6 and '6':
+                        return True
+                    elif event.key == K_7 and '7':
+                        return True
+                    elif event.key == K_8 and '8':
+                        return True
+                    elif event.key == K_9 and '9':
+                        return True
+                    elif event.key == K_0 and '0':
+                        return True
+                    elif event.key == K_1 and '1':
+                        return True
+                    elif event.key == K_2 and '2':
+                        return True
+                    elif event.key == K_3 and '3':
+                        return True
+                    elif event.key == K_4 and '4':
+                        return True
+                    elif event.key == K_5 and '5':
+                        return True
+                    elif event.key == K_6 and '6':
+                        return True
+                    elif event.key == K_7 and '7':
+                        return True
+                    elif event.key == K_8 and '8':
+                        return True
+                    elif event.key == K_9 and '9':
+                        return True
+                    elif event.key == K_BACKQUOTE and '`':
+                        return True
+                    elif event.key == K_MINUS and '-':
+                        return True
+                    elif event.key == K_EQUALS and '=':
+                        return True
+                    elif event.key == K_LEFTBRACKET and '[':
+                        return True
+                    elif event.key == K_RIGHTBRACKET and ']':
+                        return True
+                    elif event.key == K_BACKSLASH and '\\':
+                        return True
+                    elif event.key == K_SEMICOLON and ';':
+                        return True
+                    elif event.key == K_QUOTE and '\'':
+                        return True
+                    elif event.key == K_COMMA and ',':
+                        return True
+                    elif event.key == K_PERIOD and '.':
+                        return True
+                    elif event.key == K_SLASH and '/':
+                        return True
+                elif self.shifted:
+                    if event.key == K_a and 'A':
+                        return True
+                    elif event.key == K_b and 'B':
+                        return True
+                    elif event.key == K_c and 'C':
+                        return True
+                    elif event.key == K_d and 'D':
+                        return True
+                    elif event.key == K_e and 'E':
+                        return True
+                    elif event.key == K_f and 'F':
+                        return True
+                    elif event.key == K_g and 'G':
+                        return True
+                    elif event.key == K_h and 'H':
+                        return True
+                    elif event.key == K_i and 'I':
+                        return True
+                    elif event.key == K_j and 'J':
+                        return True
+                    elif event.key == K_k and 'K':
+                        return True
+                    elif event.key == K_l and 'L':
+                        return True
+                    elif event.key == K_m and 'M':
+                        return True
+                    elif event.key == K_n and 'N':
+                        return True
+                    elif event.key == K_o and 'O':
+                        return True
+                    elif event.key == K_p and 'P':
+                        return True
+                    elif event.key == K_q and 'Q':
+                        return True
+                    elif event.key == K_r and 'R':
+                        return True
+                    elif event.key == K_s and 'S':
+                        return True
+                    elif event.key == K_t and 'T':
+                        return True
+                    elif event.key == K_u and 'U':
+                        return True
+                    elif event.key == K_v and 'V':
+                        return True
+                    elif event.key == K_w and 'W':
+                        return True
+                    elif event.key == K_x and 'X':
+                        return True
+                    elif event.key == K_y and 'Y':
+                        return True
+                    elif event.key == K_z and 'Z':
+                        return True
+                    elif event.key == K_0 and ')':
+                        return True
+                    elif event.key == K_1 and '!':
+                        return True
+                    elif event.key == K_2 and '@':
+                        return True
+                    elif event.key == K_3 and '#':
+                        return True
+                    elif event.key == K_4 and '$':
+                        return True
+                    elif event.key == K_5 and '%':
+                        return True
+                    elif event.key == K_6 and '^':
+                        return True
+                    elif event.key == K_7 and '&':
+                        return True
+                    elif event.key == K_8 and '*':
+                        return True
+                    elif event.key == K_9 and '(':
+                        return True
+                    elif event.key == K_BACKQUOTE and '~':
+                        return True
+                    elif event.key == K_MINUS and '_':
+                        return True
+                    elif event.key == K_EQUALS and '+':
+                        return True
+                    elif event.key == K_LEFTBRACKET and '{':
+                        return True
+                    elif event.key == K_RIGHTBRACKET and '}':
+                        return True
+                    elif event.key == K_BACKSLASH and '|':
+                        return True
+                    elif event.key == K_SEMICOLON and ':':
+                        return True
+                    elif event.key == K_QUOTE and '"':
+                        return True
+                    elif event.key == K_COMMA and '<':
+                        return True
+                    elif event.key == K_PERIOD and '>':
+                        return True
+                    elif event.key == K_SLASH and '?':
+                        return True

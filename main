@@ -1,0 +1,486 @@
+'''
+Created on Mar 6, 2015
+
+@author: Taylor Flatt
+@note: This is a work in progress and there are several features I am in the process
+of introducing. I am turning in a bare bones project (fulfills all the requires set 
+forth by the rubric and includes extra features).
+'''
+import pygame, sys, TextInputManager, Menu
+from Menu import *
+from Colors import *
+
+'''
+Main Parameters
+'''
+pygame.init()
+clock = pygame.time.Clock()
+WINDOW_TITLE = "Window Title Goes Here"
+pygame.display.set_caption(WINDOW_TITLE)
+
+'''''''''''''''
+GLOBAL STATICS
+'''''''''''''''
+
+'''
+MAIN
+'''
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 800
+
+'''
+Create the screen
+'''
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+
+
+
+def main():
+    ''''''             ''''''
+    ''' Pre-loop Variables'''
+    ''''''             ''''''
+    
+    '''
+    @var nameFlag: Sets the flag a while loop is executed while the player enters their name.
+    @var state: Default set to TITLE since that is the first game state we want the player to see.
+    @var pauseState: Default set to False so the game is not paused and can be toggled by player input later.
+    @var playerScore: Default set to 0. Tracks player score on bricks completely destroyed.
+    @var enteredName: Defaulted to False. Checks if the player's name has been fully entered (i.e the player has or has not pressed enter. So we can run a while).
+    '''
+    state = TITLE
+    keyboard = pygame.key.get_pressed()
+    pauseState = False
+    enteredName = False
+    GAME_DIFFICULTY = 1
+    menu = Menu(state)
+    
+    while(True):
+        screen.fill(Color.black)
+        msElapsed = clock.tick(30)
+        
+        menu.checkPaused(menu.getState(), pauseState)
+        
+        '''Runs logic for Game State vs Paused State'''
+        '''if(state == GAME or state == PAUSED):
+            
+            Allows the user to pause upon pressing the 'p' key
+            if(keyboard[pygame.K_p] and pauseState == False)
+                pauseState = True
+                
+                if(state == GAME):
+                    state = PAUSED
+                    
+                else:
+                    state = GAME
+                    
+            elif(keyboard[pygame.K_p] == False):
+                pauseState = False
+            #elif(keyboard[pygame.K_p] == True and ball.isBallReleased() == False):
+                #displayTitle = fontTitle.render("You cannot pause yet! You must first release the ball.", True, Color.white)
+                #screen.blit(displayTitle, (((SCREEN_WIDTH / 2) - displayTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 150)))'''
+        
+        
+        if(menu.getState() == TITLE):
+            
+            displayTitle = fontMainTitle.render("Game Title", True, Color.white)
+            displayContinue = fontSubTitle.render("Press any key to continue! (Except Enter)", True, Color.white)
+            
+            screen.blit(displayTitle, (((SCREEN_WIDTH / 2) - displayTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 150)))
+            screen.blit(displayContinue, (((SCREEN_WIDTH / 2) - displayContinue.get_width() / 2), (SCREEN_HEIGHT - 100)))
+            
+            '''
+            @bug: For some reason, whatever key I press here is "remembered" when I go to state == MAIN under the while loop if conditional. Whatever that if conditional
+            key is binded to, if I press it here as my "any key", then it will completely bypass the MAIN state and go directly to the MENU state (it enters the if 
+            conditional even though the return key was pressed previously and handled. I have tried pygame.event.clean()/pump()/etc and even printed out the queued 
+            events to see if it is maybe being stored but it doesn't look like it is. I think maybe the key I press here will stay "down" until maybe another key is 
+            toggled or maybe it sees it as the last pressed. Not sure what to do about this bug. Might consider a work around but it is something that can be managed.
+            '''
+            for event in pygame.event.get():
+                
+                '''If enter is not pressed, it doesn't skip name creation. Otherwise it somehow does. Need to figure that out. Temp fix below.'''
+                if(event.type == pygame.KEYDOWN):
+                    state = menu.setState(CREATION)
+                    print('We pressed a key other than return')
+                
+                elif(event.type == pygame.QUIT):
+                    pygame.quit; sys.exit();
+                    
+                        
+        if(menu.getState() == CREATION):
+            screen.fill(Color.black)     
+                
+            dispMenuTitle = fontTitle.render("Player Creation", True, Color.white)
+            dispMenuDirections = fontDirections.render("Welcome to Game! To begin, please enter a name and then simply press enter after you are satisfied!", True, Color.white)
+            
+            '''Don't forget to put the keywords or won't work!'''
+            enterNameField = TextInputManager.Input(x=260, y=340, maxlength=MAX_NAME_LENGTH, color=Color.white, font=fontPlayerEnterName, prompt='Name: ' )
+            
+            screen.blit(dispMenuTitle, (((SCREEN_WIDTH / 2) - dispMenuTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 300)))
+            screen.blit(dispMenuDirections, (((SCREEN_WIDTH / 2) - 50 - dispMenuDirections.get_width() / 2), (SCREEN_HEIGHT / 2 - 100)))
+            
+            '''
+            @bug: For some reason I can't delete text anymore. My class in TextInputManager works just fine. I tested it with a document called debug.py and I could delete text. 
+            The formatting for the while loop (logic wise) seems correct. Basically what happens is when I press backspace, it goes all the way to the beginning of the 
+            line and doesn't actually delete text. Not sure what is happening here. I attempted to remove my if conditional AND my for polling statement and use the raw 
+            logic of the while loop and that STILL didn't fix the issue. I suspect something that is part of my initial game loop is causing issue. The game update wouldn't 
+            do it because once I trap inside the while loop, that update isn't called. I'll have to look into it further.
+            '''
+            
+            '''
+            @bug: Update 3/18/15: If I remove the while loop, then I can type one character before the screen is wiped. (For obvious reasons). I have the screen updated and filled in various
+            places. I tried removing them or placing them in the beginning of game loops to serve the same function to no avail. I need this looped so I can type in the box but I would also 
+            like to be able to backspace (remove characters). I can place it in a SINGLE while loop (see debug.py) and it works easily. I even recreate that loop entirely and it doesn't 
+            work here. It exhibits the same symptoms as before (going to the beginning of the line and starting to type again).
+            
+            Honestly unsure why it goes ALL the way to the beginning as if I am retyping everything in the field again. It is definitely odd behavior.
+            '''
+            
+            while(enteredName == False):
+                events = pygame.event.get() #Sets variable events so we can access our key presses
+                
+                '''ALLOW EXIT'''
+                for event in events:
+                    if event.type == QUIT: return
+                        
+                if(menu.isKeyPressed(pygame.K_RETURN) == True):
+                    #What if they are done typing?
+                    #Don't forget to set the variable storing the string.
+                    #This section will do more work in the future. You'll probably be needing to call additional methods here.
+                    playerName = enterNameField.update(events)
+                    menu.setState(MAIN)
+                    print(enterNameField.update(events)) #Sets the player name in my array.
+                    enteredName = True #Allows me to exit my while loop.
+                
+                enterNameField.update(events) #Adds the keys to the event array
+                enterNameField.draw(screen) #Draws the keys
+                pygame.display.flip() #Refresh the screen
+            
+                
+        if(menu.getState() == MAIN):
+            '''
+            Statics for the menu items
+            
+            There is probably a better way to do this, but since there are a finite amount of menu options which aren't likely to change, this isn't a big deal.
+            I could honestly put a box around the text or something (or fit it to a rectangle) and then check collision with the rectangle since that already 
+            has a method that checks for that. But this will work for now. I can explore more efficient solutions later.
+            
+            @todo: Place text on the screen based on percentages so resizing screen later is an option. Then I can reference the x coordinates based on those 
+            percentages and then use the font size (the height) to check the height.
+            '''
+            '''
+            GAME MOUSE_OVER STATICS
+            '''
+            leastX_GAME = 364
+            mostX_GAME = 440
+            leastY_GAME = 250
+            mostY_GAME = 283
+            
+            '''
+            SETTINGS MOUSE_OVER STATICS
+            '''
+            leastX_SETTINGS = 329
+            mostX_SETTINGS = 468
+            leastY_SETTINGS = 297
+            mostY_SETTINGS = 340
+            
+            '''
+            CREDITS MOUSE_OVER STATICS
+            '''
+            leastX_CREDITS = 335
+            mostX_CREDITS = 463
+            leastY_CREDITS = 349
+            mostY_CREDITS = 380
+            
+            (mouseX, mouseY) = pygame.mouse.get_pos()
+            
+            #Need to poll my events
+            for mainMenuEvent in pygame.event.get():
+                    if mainMenuEvent.type == pygame.MOUSEBUTTONDOWN:
+                        
+                        '''GAME STATE'''
+                        if(mouseX >= leastX_GAME and mouseX < mostX_GAME and mouseY >= leastY_GAME and mouseY < mostY_GAME):
+                            #state = GAME
+                            menu.setState(GAME)
+                                
+                        '''SETTINGS STATE'''
+                        if(mouseX >= leastX_SETTINGS and mouseX < mostX_SETTINGS and mouseY >= leastY_SETTINGS and mouseY < mostY_SETTINGS):
+                            #state = SETTINGS
+                            menu.setState(SETTINGS)
+                            
+                        '''CREDITS STATE'''
+                        if(mouseX >= leastX_CREDITS and mouseX < mostX_CREDITS and mouseY >= leastY_CREDITS and mouseY < mostY_CREDITS):
+                            #state = CREDITS
+                            menu.setState(CREDITS)
+                            
+                        '''ALLOW EXIT'''
+                    elif mainMenuEvent.type == pygame.QUIT:
+                        pygame.quit(); sys.exit();
+
+            dispPlayerName = fontParagraph.render("Player: " + playerName, True, Color.gold)
+            dispMenuTitle = fontTitle.render("Main Menu", True, Color.white)
+            dispMenuOptionPlay = fontTitle.render("Play", True, Color.white)
+            dispMenuOptionSettings = fontTitle.render("Settings", True, Color.white)
+            dispMenuCredits = fontTitle.render("Credits", True, Color.white)
+            
+            screen.blit(dispPlayerName, ((SCREEN_WIDTH - dispPlayerName.get_width() - 5), 20))
+            screen.blit(dispMenuTitle, (((SCREEN_WIDTH / 2) - dispMenuTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 250)))
+            screen.blit(dispMenuOptionPlay, (((SCREEN_WIDTH / 2)- dispMenuOptionPlay.get_width() / 2), (SCREEN_HEIGHT / 2 - 150)))
+            screen.blit(dispMenuOptionSettings, (((SCREEN_WIDTH / 2)- dispMenuOptionSettings.get_width() / 2), (SCREEN_HEIGHT / 2 - 100)))
+            screen.blit(dispMenuCredits, (((SCREEN_WIDTH / 2)- dispMenuCredits.get_width() / 2), (SCREEN_HEIGHT / 2 - 50)))
+
+        '''
+        @todo: Eventually I will add the ability to re-map keys (pause/quit/left movement/right movement/difficulty)
+        @todo: I want to add borders around the text so it looks like a menu box. Shouldn't be too hard. That will come later.
+        '''
+        if(menu.getState() == SETTINGS):           
+            '''
+            CHOOSE DIFFICULTY MOUSE_OVER STATICS
+            '''
+            leastX_DIFF = 330
+            mostX_DIFF = 536
+            leastY_DIFF = 250
+            mostY_DIFF = 280
+            
+            '''
+            REMAP KEYS MOUSE_OVER STATICS
+            '''
+            leastX_REMAP = 327
+            mostX_REMAP = 475
+            leastY_REMAP = 300
+            mostY_REMAP = 331
+            
+            '''
+            MAIN MENU (BACK) MOUSE_OVER STATICS
+            '''
+            leastX_SETTINGS_BACK = 64
+            mostX_SETTINGS_BACK = 247
+            leastY_SETTINGS_BACK = 693
+            mostY_SETTINGS_BACK = 740
+            
+            (mouseX, mouseY) = pygame.mouse.get_pos()
+            
+            for settingsMenuEvent in pygame.event.get():
+                    if settingsMenuEvent.type == pygame.MOUSEBUTTONDOWN:
+                        
+                        '''DIFFICULTY STATE'''
+                        if(mouseX >= leastX_DIFF and mouseX < mostX_DIFF and mouseY >= leastY_DIFF and mouseY < mostY_DIFF):
+                            state = DIFFICULTY
+                                
+                        '''REBIND KEYS STATE'''
+                        if(mouseX >= leastX_REMAP and mouseX < mostX_REMAP and mouseY >= leastY_REMAP and mouseY < mostY_REMAP):
+                            state = REBIND_KEYS
+                            
+                        '''MAIN MENU STATE'''
+                        if(mouseX >= leastX_SETTINGS_BACK and mouseX < mostX_SETTINGS_BACK and mouseY >= leastY_SETTINGS_BACK and mouseY < mostY_SETTINGS_BACK or keyboard[pygame.K_BACKSPACE] == True 
+                           or keyboard[pygame.K_ESCAPE] == True):
+                            state = MAIN
+                            
+                            '''ALLOW EXIT'''
+                    elif settingsMenuEvent.type == pygame.QUIT:
+                        pygame.quit(); sys.exit();
+            
+            dispPlayerName = fontParagraph.render("Player: " + playerName, True, Color.gold)
+            dispSettingsTitle = fontTitle.render("Settings Menu", True, Color.white)
+            dispSettingsDifficulty = fontSubTitle.render("Choose Difficulty", True, Color.white)
+            dispSettingsRemap = fontSubTitle.render("Remap Keys", True, Color.white)
+            dispSettingsBack = fontSubTitle.render("< Main Menu", True, Color.white)
+            
+            screen.blit(dispPlayerName, ((SCREEN_WIDTH - dispPlayerName.get_width() - 5), 20))
+            screen.blit(dispSettingsTitle, (((SCREEN_WIDTH / 2) - dispSettingsTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 250)))
+            screen.blit(dispSettingsDifficulty, (((SCREEN_WIDTH / 2)- dispMenuOptionPlay.get_width() / 2 - 35), (SCREEN_HEIGHT/2 - 150)))
+            screen.blit(dispSettingsRemap, (((SCREEN_WIDTH / 2)- dispSettingsRemap.get_width() / 2), (SCREEN_HEIGHT / 2 - 100)))
+            screen.blit(dispSettingsBack, (((SCREEN_WIDTH / 5)- dispSettingsBack.get_width() / 2), (SCREEN_HEIGHT - 100)))
+                
+            
+        '''Also wanna add ability to change difficulty via pause menu during game maybe?'''
+        if(menu.getState() == DIFFICULTY):
+            '''
+            EASY MOUSE_OVER STATICS
+            '''
+            leastX_EASY = 365
+            mostX_EASY = 433
+            leastY_EASY = 300
+            mostY_EASY = 332
+            
+            '''
+            MEDIUM MOUSE_OVER STATICS
+            '''
+            leastX_MEDIUM = 340
+            mostX_MEDIUM = 457
+            leastY_MEDIUM = 347
+            mostY_MEDIUM = 381
+            
+            '''
+            HARD MOUSE_OVER STATICS
+            '''
+            leastX_HARD = 363
+            mostX_HARD = 437
+            leastY_HARD = 400
+            mostY_HARD = 432
+            
+            '''
+            BACK MOUSE_OVER STATICS
+            '''
+            leastX_DIFFICULTY_BACK = 64
+            mostX_DIFFICULTY_BACK = 247
+            leastY_DIFFICULTY_BACK = 693
+            mostY_DIFFICULTY_BACK = 740
+            
+            (mouseX, mouseY) = pygame.mouse.get_pos()
+            
+            for settingsMenuEvent in pygame.event.get():
+                    if settingsMenuEvent.type == pygame.MOUSEBUTTONDOWN:
+                        
+                        '''SET EASY DIFFICULTY'''
+                        '''
+                        @todo: I need to figure out how to display a confirmation of the change in difficulty settings.
+                        '''
+                        if(mouseX >= leastX_EASY and mouseX < mostX_EASY and mouseY >= leastY_EASY and mouseY < mostY_EASY):
+                            GAME_DIFFICULTY = 1
+                            '''Put logic here to adjust the game difficulty settings. Modify variables or call functions here to do the job.'''
+                            state = SETTINGS
+                                
+                        '''SET MEDIUM DIFFICULTY'''
+                        if(mouseX >= leastX_MEDIUM and mouseX < mostX_MEDIUM and mouseY >= leastY_MEDIUM and mouseY < mostY_MEDIUM):
+                            GAME_DIFFICULTY = 2
+                            '''Put logic here to adjust the game difficulty settings. Modify variables or call functions here to do the job.'''
+                            state = SETTINGS
+                            
+                        '''SET HARD DIFFICULTY'''
+                        if(mouseX >= leastX_HARD and mouseX < mostX_HARD and mouseY >= leastY_HARD and mouseY < mostY_HARD or keyboard[pygame.K_BACKSPACE] == True 
+                           or keyboard[pygame.K_ESCAPE] == True):
+                            GAME_DIFFICULTY = 3
+                            '''Put logic here to adjust the game difficulty settings. Modify variables or call functions here to do the job.'''
+                            state = SETTINGS
+                            
+                        '''MAIN MENU STATE'''
+                        if(mouseX >= leastX_DIFFICULTY_BACK and mouseX < mostX_DIFFICULTY_BACK and mouseY >= leastY_DIFFICULTY_BACK and mouseY < mostY_DIFFICULTY_BACK or keyboard[pygame.K_BACKSPACE] == True 
+                           or keyboard[pygame.K_ESCAPE] == True):
+                            state = MAIN
+                            
+                            '''ALLOW EXIT'''
+                    elif settingsMenuEvent.type == pygame.QUIT:
+                        pygame.quit(); sys.exit();
+            
+            dispPlayerName = fontParagraph.render("Player: " + playerName, True, Color.gold)
+            dispDifficultyTitle = fontTitle.render("Difficulty Menu", True, Color.white)
+            dispDifficultyDirections = fontParagraph.render("Please choose one of the following: ", True, Color.white)
+            dispDifficultyEasy = fontSubTitle.render("Easy", True, Color.white)
+            dispDifficultyMedium = fontSubTitle.render("Medium", True, Color.white)
+            dispDifficultyHard = fontSubTitle.render("Hard", True, Color.white)
+            dispDifficultyBack = fontSubTitle.render("< Settings Menu", True, Color.white)
+            
+            screen.blit(dispPlayerName, ((SCREEN_WIDTH - dispPlayerName.get_width() - 5), 20))
+            screen.blit(dispDifficultyTitle, (((SCREEN_WIDTH / 2) - dispDifficultyTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 250)))
+            screen.blit(dispDifficultyDirections, (((SCREEN_WIDTH / 2)- dispDifficultyDirections.get_width()/2), (SCREEN_HEIGHT / 2 - 150)))
+            screen.blit(dispDifficultyEasy, (((SCREEN_WIDTH / 2)- dispDifficultyEasy.get_width() / 2), (SCREEN_HEIGHT / 2 - 100)))
+            screen.blit(dispDifficultyMedium, (((SCREEN_WIDTH / 2)- dispDifficultyMedium.get_width() / 2), (SCREEN_HEIGHT / 2 - 50)))
+            screen.blit(dispDifficultyHard, (((SCREEN_WIDTH / 2)- dispDifficultyHard.get_width() / 2), (SCREEN_HEIGHT / 2)))
+            screen.blit(dispSettingsBack, (((SCREEN_WIDTH / 5)- dispSettingsBack.get_width() / 2), (SCREEN_HEIGHT - 100)))
+        
+        if(menu.getState() == REBIND_KEYS):
+            '''
+            SETTINGS MOUSE_OVER STATICS
+            '''
+            leastX_SETTINGS_BACK = 64
+            mostX_SETTINGS_BACK = 247
+            leastY_SETTINGS_BACK = 693
+            mostY_SETTINGS_BACK = 740
+            
+            (mouseX, mouseY) = pygame.mouse.get_pos()
+            
+            for rebindMenuEvent in pygame.event.get():
+                if rebindMenuEvent.type == pygame.MOUSEBUTTONDOWN:
+                    print(pygame.mouse.get_pressed())
+                    '''SETTINGS STATE'''
+                    if(mouseX >= leastX_SETTINGS_BACK and mouseX < mostX_SETTINGS_BACK and mouseY >= leastY_SETTINGS_BACK and mouseY < mostY_SETTINGS_BACK or keyboard[pygame.K_BACKSPACE] == True
+                       or keyboard[pygame.K_ESCAPE] == True):
+                        state = SETTINGS
+                        
+                    '''ALLOW EXIT'''
+                elif rebindMenuEvent.type == pygame.QUIT:
+                    pygame.quit(); sys.exit();
+            
+            
+            dispPlayerName = fontParagraph.render("Player: " + playerName, True, Color.gold)
+            dispRemapTitle = fontTitle.render("Remap Keys", True, Color.white)
+            dispRemapComingSoon = fontParagraph.render("This feature has not yet been added. ", True, Color.red)
+            dispRemapBack = fontSubTitle.render("< Settings Menu", True, Color.white)
+            
+            screen.blit(dispPlayerName, ((SCREEN_WIDTH - dispPlayerName.get_width() - 5), 20))
+            screen.blit(dispRemapTitle, (((SCREEN_WIDTH / 2) - dispRemapTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 250)))
+            screen.blit(dispRemapComingSoon,(((SCREEN_WIDTH / 2) - dispRemapTitle.get_width() / 2 - 20), (SCREEN_HEIGHT / 2 - 150)))
+            screen.blit(dispRemapBack, (((SCREEN_WIDTH / 5)- dispRemapBack.get_width() / 2), (SCREEN_HEIGHT - 100)))
+        
+        if(menu.getState() == CREDITS):           
+            '''
+            SETTINGS MOUSE_OVER STATICS
+            '''
+            leastX_CREDITS_BACK = 54
+            mostX_CREDITS_BACK = 262
+            leastY_CREDITS_BACK = 696
+            mostY_CREDITS_BACK = 732
+            
+            (mouseX, mouseY) = pygame.mouse.get_pos()
+            
+            for creditMenuEvent in pygame.event.get():
+                if creditMenuEvent.type == pygame.MOUSEBUTTONDOWN:
+                    
+                    print(pygame.mouse.get_pressed())
+                    '''SETTINGS STATE'''
+                    if(mouseX >= leastX_CREDITS_BACK and mouseX < mostX_CREDITS_BACK and mouseY >= leastY_CREDITS_BACK and mouseY < mostY_CREDITS_BACK or keyboard[pygame.K_BACKSPACE] == True
+                       or keyboard[pygame.K_ESCAPE] == True):
+                        state = MAIN
+                        
+                    '''ALLOW EXIT'''
+                elif event.type == pygame.QUIT:
+                    creditMenuEvent.quit(); sys.exit();
+            
+            dispPlayerName = fontParagraph.render("Player: " + playerName, True, Color.gold)
+            dispCreditsTitle = fontTitle.render("Credits", True, Color.white)
+            dispCreditsPargraph = fontParagraph.render("Programmer Credits Here", True, Color.orange)
+            dispCreditsBack = fontSubTitle.render("< Main Menu", True, Color.white)
+            
+            screen.blit(dispPlayerName, ((SCREEN_WIDTH - dispPlayerName.get_width() - 5), 20))
+            screen.blit(dispCreditsTitle, (((SCREEN_WIDTH / 2) - dispCreditsTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 250)))
+            screen.blit(dispCreditsPargraph,(((SCREEN_WIDTH / 2) - dispCreditsPargraph.get_width() / 2 - 20), (SCREEN_HEIGHT / 2 - 150)))
+            screen.blit(dispCreditsBack, (((SCREEN_WIDTH / 5)- dispCreditsBack.get_width() / 2), (SCREEN_HEIGHT - 100)))
+                
+        if(menu.getState() == GAME):
+            
+            '''
+            This is your game state. Your game logic will be called within this state. Need to make sure you poll events for a 'pause' key event to change states to paused.
+            '''
+
+        if(menu.getState() == PAUSED):
+            '''
+            This is your paused state. 
+            '''
+            
+            '''
+            @todo: I plan on adding a detailed menu where you can change difficulties as well as restart or quit. Should be easy to do but just ran out of time for this assignment :\
+            '''
+            
+        if(menu.getState() == GAME_OVER):
+            dispGameOver = fontTitle.render("Game Over", True, Color.orange)
+            
+            '''Conditional to Win'''
+            dispMessage = fontTitle.render("You Win!", True, Color.green)
+            ''' '''
+            
+            '''Conditional to Lose'''
+            dispMessage = fontTitle.render("You Lose!", True, Color.red)
+            ''' '''
+            
+            screen.blit(dispGameOver, ((SCREEN_WIDTH / 2) - dispGameOver.get_width() / 2, (dispGameOver.get_height() - dispGameOver.get_height())))
+            screen.blit(dispMessage, ((SCREEN_WIDTH / 2) - dispGameOver.get_width() / 2 + 5, (SCREEN_HEIGHT / 2 - dispGameOver.get_height() * 4 - dispGameOver.get_height() * 4)))
+                
+        pygame.display.update()
+        
+        '''ALLOW EXIT'''
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); sys.exit();
+                
+if __name__ == '__main__':
+    main()

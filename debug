@@ -1,0 +1,38 @@
+'''
+Created on Mar 25, 2015
+
+@author: Starburssssstsssssss
+'''
+import pygame, sys, TextInputManager
+from pygame.locals import *
+
+def main():
+    
+    pygame.init()
+    clock = pygame.time.Clock()
+    
+    SCREEN_WIDTH = 800
+    SCREEN_HEIGHT = 800
+    
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen.fill((0,0,0))
+    
+    enterNameField = TextInputManager.Input(x=260, y=340, maxlength=50, color=(255,0,0), prompt='Name: ' )
+    
+    while(1):
+        
+        clock.tick(30)
+
+        events = pygame.event.get()
+
+        for event in events:
+            if event.type == QUIT: return
+
+        screen.fill((0,0,0))
+        enterNameField.update(events)
+        enterNameField.draw(screen)
+        pygame.display.flip()
+        
+        #storeName = enterNameField.update(events) #Removing comment will cause duplication to occur.
+
+if __name__ == '__main__': main()

@@ -122,8 +122,15 @@ def main():
             update method each time. It will attempt to print out 
             '''
             
+            '''
+            @bug: Update 3/24/15: Well the reason the text remains on the screen is because I don't clear the screen (fill with my background). It was an oversight. But I still have the problem 
+            where the entire line gets removed when backspace is pressed once. It leads me to think it has something to do with the speed at which the loop is cycling. It appears as if my key 
+            presses are maybe happening too quickly? Like they are being registered at a higher rate. Maybe the clock is messed up somehow.
+            '''
+            
             while(enteredName == False):
                 events = pygame.event.get() #Sets variable events so we can access our key presses
+                clock.tick(30)
                 
                 '''Extra events MUST go between my events declaration and the update to my textbox. If not, weird things will happen.'''
                 '''ALLOW EXIT'''
@@ -131,17 +138,23 @@ def main():
                     if event.type == QUIT: return
                     
                 '''Handles the event in which a None Type occurs when the player attempts to proceed without the sufficient amount of characters in their name.'''
-                if(menu.isKeyPressed(pygame.K_RETURN) == True and enterNameField.update(events) == None):
+                if((menu.isKeyPressed(pygame.K_RETURN) == True or menu.isKeyPressed(pygame.K_KP_ENTER)) and enterNameField.update(events) == None):
                     enterNameField.update(events) #Let's us handle the error of having less than 3 characters in our name.
                     print('Errored out!') #(Debug)
                     
-                elif(menu.isKeyPressed(pygame.K_RETURN) == True and len(enterNameField.update(events)) >= 3 and enterNameField.update(events) != None):
+                elif((menu.isKeyPressed(pygame.K_RETURN) == True or menu.isKeyPressed(pygame.K_KP_ENTER)) and len(enterNameField.update(events)) >= 3 and enterNameField.update(events) != None):
                     playerName = enterNameField.update(events) #Sets the player name so we can use it elsewhere
                     menu.setState(MAIN) #Changes the game state to MAIN so we exit this game state.
                     print(enterNameField.update(events)) #Prints the player name from my array. (Debug)
                     print(len(enterNameField.update(events))) #Prints the length of the player name from my array. (Debug)
                     enteredName = True #Allows me to exit my while loop.
-
+                
+                #ALlows me to backspace, removing characters (showing their removal by filling the screen), then redisplaying the text on the screen.
+                elif(menu.isKeyPressed(pygame.K_BACKSPACE) == True):
+                    screen.fill(Color.black) #Fill the screen so it will reflect the character that is removed.
+                    screen.blit(dispMenuTitle, (((SCREEN_WIDTH / 2) - dispMenuTitle.get_width() / 2), (SCREEN_HEIGHT / 2 - 300))) #Redisplay
+                    screen.blit(dispMenuDirections, (((SCREEN_WIDTH / 2) - 50 - dispMenuDirections.get_width() / 2), (SCREEN_HEIGHT / 2 - 100))) #Redisplay
+                
                 enterNameField.update(events) #Adds the keys to the event array
                 enterNameField.draw(screen) #Draws the keys
                 pygame.display.flip() #Refresh the screen

@@ -89,7 +89,9 @@ class Input:
         self.maxlength = self.options.maxlength
         self.prompt = self.options.prompt; self.value = ''
         self.shifted = False
-        self.state = 0 #Default state.
+        self.bsDelay = 750
+        self.bsTimer = pygame.time.get_ticks()
+        self.bsGo = True
 
     def set_pos(self, x, y):
         """ Set the position to x, y """
@@ -113,16 +115,23 @@ class Input:
         '''
         keyPressed = pygame.key.get_pressed() #So we can continually hold down a key and also delete a key.
         
-        if(self.state == 3 and keyPressed[K_BACKSPACE]): #Lets us delete a key
-            self.state = 0 #Reset after deleting key
-            self.value = self.value[:-1] #Removes the last key stored.
-
-        elif keyPressed[K_BACKSPACE]: 
-            self.state += 1
+        if(keyPressed[K_BACKSPACE]):
+            if(self.bsGo):
+                #print "hi"
+                self.bsTimer = pygame.time.get_ticks()
+                self.bsGo = False
+                self.bsDelay = 750
+                #print self.value
+                self.value = self.value[:-1] #Removes the last key stored.
+                #print self.value
+            if(pygame.time.get_ticks() - self.bsTimer >= self.bsDelay):
+                #print "hi2"    
+                self.value = self.value[:-1] #Removes the last key stored.
+                self.bsDelay = 100
+                self.bsTimer = pygame.time.get_ticks()
             
         else:
-            self.state = 0
-            
+            self.bsGo = True
         '''
         '''
             
@@ -130,7 +139,7 @@ class Input:
             if event.type == KEYUP:
                 if event.key == K_LSHIFT or event.key == K_RSHIFT: self.shifted = False
             if event.type == KEYDOWN:
-                if event.key == K_BACKSPACE: self.value = self.value[:-1]
+                if event.key == K_BACKSPACE: pass #self.value = self.value[:-1]
                 elif event.key == K_LSHIFT or event.key == K_RSHIFT: self.shifted = True
                 elif event.key == K_RETURN: return self.value
                 elif event.key == K_KP_ENTER: return self.value
@@ -248,4 +257,6 @@ class Input:
                     elif event.key == K_PERIOD and '>' in self.restricted: self.value += '>'
                     elif event.key == K_SLASH and '?' in self.restricted: self.value += '?'
 
-        if len(self.value) > self.maxlength and self.maxlength >= 0: self.value = self.value[:-1]
+        if len(self.value) > self.maxlength and self.maxlength >= 0:
+            print "bottom conditional: ", len(self.value) 
+            self.value = self.value[:-1]

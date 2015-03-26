@@ -130,7 +130,6 @@ def main():
             
             while(enteredName == False):
                 events = pygame.event.get() #Sets variable events so we can access our key presses
-                clock.tick(30)
                 
                 '''Extra events MUST go between my events declaration and the update to my textbox. If not, weird things will happen.'''
                 '''ALLOW EXIT'''

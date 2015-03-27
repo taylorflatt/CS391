@@ -1,6 +1,6 @@
-Muff Slayer
+#**Muff Slayer**
 
-Menu System
+##**Menu System**
 	* Title Screen
 		o Begin Game
 		o Settings
@@ -18,10 +18,10 @@ Menu System
 		o Graphic Settings
 	* Credits
 
-Story
+##**Story**
 	*One day the Muffn Man, who lives on Drury Lane, decided to release his evil batch of muffns out into the city of Kittopolis. It is is up to Kitteh and his butt kicking abilities to stop the Muffn Man and save Kittopolis. However this will not be one simple task for Kitteh. He will have to travel through the dark parts of Kittopolis avoiding creatures of the streets and muffns, of course. There is one more obstacle standing in front of Kitteh and his foe, the Muffn Man's most diabolical creation and sidekick... The Gingerbread Man!!!
 
-Environment
+##**Environment**
 	* Level/Background
 		o Alleys
 	* Junk Yard Dogs
@@ -41,7 +41,7 @@ Environment
 		o Spike Pits
 	* Piano Cat Easter Egg
 
-Gameplay
+##**Gameplay**
 	* Main Character = Kitteh
 		o Default Weapon = Pistol
 		o Unlimited Ammo
@@ -109,7 +109,7 @@ Gameplay
 		o Muffn Man Final Boss
 			* Fishing pole cat toy
 
-Controls
+##**Controls**
 	* Movement
 		o Left: A
 		o Right: D

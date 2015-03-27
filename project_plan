@@ -1,0 +1,124 @@
+Muff Slayer
+
+Menu System
+	* Title Screen
+		o Begin Game
+		o Settings
+		o Quit Game
+		o Credits
+	* Pause Menu
+		o Return To Game
+		o Settings
+		o Restart
+		o Quit to Main Menu
+	* Settings Menu
+		o Difficulty
+		o Control Profiles
+		o Audio Volume
+		o Graphic Settings
+	* Credits
+
+Story
+	*One day the Muffn Man, who lives on Drury Lane, decided to release his evil batch of muffns out into the city of Kittopolis. It is is up to Kitteh and his butt kicking abilities to stop the Muffn Man and save Kittopolis. However this will not be one simple task for Kitteh. He will have to travel through the dark parts of Kittopolis avoiding creatures of the streets and muffns, of course. There is one more obstacle standing in front of Kitteh and his foe, the Muffn Man's most diabolical creation and sidekick... The Gingerbread Man!!!
+
+Environment
+	* Level/Background
+		o Alleys
+	* Junk Yard Dogs
+	* Muffns
+		o Apartments/House
+	* Street Rats/Mice
+	* Muffns
+		o Building Top
+	* Crows and Pigeons
+	* Muffns
+	* Gingerbread Man
+		o Drury lane
+	* Muffns
+	* Muffn Man
+	* Death Traps
+		o Water Pits
+		o Spike Pits
+	* Piano Cat Easter Egg
+
+Gameplay
+	* Main Character = Kitteh
+		o Default Weapon = Pistol
+		o Unlimited Ammo
+		o Health Pool
+			* Easy - 3 Fish
+			* Normal - 2 Fish
+			* Hard -1 Fish
+			* GOAT - 1 Fish
+		o Inventory
+			* Max 3 Guns
+		o Lives 
+			* Restart Level After Death
+			* Easy, Normal, Hard - 9
+			* GOAT -1
+	* Pickups
+		o Health
+			* Meow Mix 
+				* +1 Health
+		o Powerups
+			* Catnip
+				* Nyan Cat
+				* Invincible
+			* Scratch Post
+				* Increase Melee Range
+				* Increase Melee Damage
+				* Claws Visible
+		o Weapons
+			* Pistol
+				* Single Shot
+				* Bullet
+			* Machine Gun
+				* Automatic
+				* Bullet
+				* Higher Rate of Fire
+				* Less damage per bullet
+			* Shotgun
+				* 3 Shot Spread
+				* Pellets (Smaller that Bullets)
+			* RPG (Explosive)
+				* Single Shot
+				* Rocket (Larger than Bullets)
+				* High Damage
+				* Lower Rate of Fire
+			* Grenades
+				* Thrown
+				* Arc
+				* Explode on Impact
+				* Blast Radius
+			* BFG
+				* Only 1 shot in clip
+	* Enemies 
+		o Muffns
+			* Walk
+		o Mice
+			* Run Fast
+		o Dogs
+			* Jump
+			* Run
+		o Birds
+			* Fly
+			* "I saw a putty cat"
+		o Gingerbread man Mini-Boss
+			* 3 gumdrop shots to kill
+			* “Not the gumdrop buttons!”
+		o Muffn Man Final Boss
+			* Fishing pole cat toy
+
+Controls
+	* Movement
+		o Left: A
+		o Right: D
+		o Duck/Crouch: S
+		o Crouching = Cat crawls on all fours, holds gun by tail
+		o Climb/Jump: W
+	* Double Jump: Wx2
+	* Pick up Weapon: E
+	* Melee: Q
+		o Claw Swipe
+	* Change Weapon: Numeric Keys 1-3
+	* Shoot: Space

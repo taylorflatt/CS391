@@ -3,7 +3,7 @@
 '''
 Taylor Flatt Addendum
 
-Updated March 8th 2015
+Updated April 8th 2015
 '''
 
 '''
@@ -106,6 +106,9 @@ class Input:
         """ Draw the text input to a surface """
         text = self.font.render(self.prompt+self.value, True, self.color)
         surface.blit(text, (self.x, self.y))
+        
+    def getCharAmount(self):
+        return len(self.value)
 
     def update(self, events):
         """ Update the input based on passed events """
